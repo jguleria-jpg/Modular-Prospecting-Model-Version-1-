@@ -1,0 +1,318 @@
+# config.yaml
+api:
+  google_places_key: 'AIzaSyDbnaots9JE1FPSdq46V7Io0awtiDqZJgc'
+  openai_key: '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'
+  default_model: 'gpt-4o-mini'
+
+search:
+  max_results: 100
+  tier_1_radius: 50000
+  tier_2_radius: 25000
+  
+  # Core ICP keywords (high value, direct industry match)
+  core_icp_keywords:
+    - 'medical device'
+    - 'manufacturing'
+    - 'defense contractor'
+    - 'biotech'
+    - 'biotechnology'
+    - 'consulting services'
+    - 'professional services'
+    - 'engineering services'
+    - 'technical services'
+    - 'aerospace'
+    - 'healthcare technology'
+    - 'defense systems'
+    - 'military technology'
+    - 'precision manufacturing'
+
+  # Peripheral keywords (size indicators, lower value)
+  peripheral_keywords:
+    - 'small business'
+    - 'boutique'
+    - 'family-owned'
+    - 'specialized consulting'
+    - 'IT services'
+    - 'software development'
+    - 'local business'
+    - 'startup'
+    - 'SMB'
+    - 'independent business'
+    - 'boutique consulting'
+    - 'specialized services'
+
+  # Tier 1: Major metros (50km radius)
+  tier_1_cities:
+    - "New York, NY"
+    - "Los Angeles, CA"
+    - "Chicago, IL"
+    - "Houston, TX"
+    - "Phoenix, AZ"
+    - "Philadelphia, PA"
+    - "San Antonio, TX"
+    - "San Diego, CA"
+    - "Dallas, TX"
+    - "San Jose, CA"
+
+  # Tier 2: Second-tier BD-friendly markets (25km radius)
+  tier_2_cities:
+    - "Raleigh, NC"
+    - "Salt Lake City, UT"
+    - "Austin, TX"
+    - "Pittsburgh, PA"
+    - "Kansas City, MO"
+    - "Nashville, TN"
+    - "Charlotte, NC"
+    - "Denver, CO"
+    - "Portland, OR"
+    - "Minneapolis, MN"
+    - "Cleveland, OH"
+    - "Cincinnati, OH"
+
+  # Comprehensive cities for legacy search
+  comprehensive_cities:
+    - "New York, NY"
+    - "Los Angeles, CA"
+    - "Chicago, IL"
+    - "Houston, TX"
+    - "Phoenix, AZ"
+    - "Philadelphia, PA"
+    - "San Antonio, TX"
+    - "San Diego, CA"
+    - "Dallas, TX"
+    - "San Jose, CA"
+    - "Austin, TX"
+    - "Jacksonville, FL"
+    - "Fort Worth, TX"
+    - "Columbus, OH"
+    - "Charlotte, NC"
+    - "San Francisco, CA"
+    - "Indianapolis, IN"
+    - "Seattle, WA"
+    - "Denver, CO"
+    - "Boston, MA"
+    - "Nashville, TN"
+    - "Detroit, MI"
+    - "Portland, OR"
+    - "Memphis, TN"
+    - "Oklahoma City, OK"
+    - "Las Vegas, NV"
+    - "Louisville, KY"
+    - "Baltimore, MD"
+    - "Milwaukee, WI"
+    - "Albuquerque, NM"
+
+  # Comprehensive keywords for legacy search
+  comprehensive_keywords:
+    - 'small business'
+    - 'startup'
+    - 'SMB'
+    - 'small company'
+    - 'local business'
+    - 'family business'
+    - 'independent business'
+    - 'boutique'
+    - 'specialized'
+    - 'medical device'
+    - 'manufacturing'
+    - 'defense contractor'
+    - 'military contractor'
+    - 'biotechnology'
+    - 'healthcare technology'
+    - 'aerospace'
+    - 'consulting services'
+    - 'professional services'
+    - 'engineering services'
+    - 'technical services'
+    - 'boutique consulting'
+    - 'specialized consulting'
+    - 'expert services'
+    - 'niche services'
+    - 'specialist'
+    - 'consultant'
+    - 'advisory services'
+    - 'software development'
+    - 'IT services'
+    - 'business services'
+    - 'management consulting'
+    - 'strategy consulting'
+    - 'operations consulting'
+
+filters:
+  # Business types to exclude (Google Places types)
+  excluded_types:
+    - 'restaurant'
+    - 'bar'
+    - 'gym'
+    - 'hotel'
+    - 'salon'
+    - 'retail'
+    - 'grocery'
+    - 'daycare'
+    - 'real_estate'
+    - 'auto_repair'
+    - 'spa'
+    - 'beauty_salon'
+    - 'car_dealer'
+    - 'gas_station'
+    - 'pharmacy'
+    - 'bank'
+    - 'insurance_agency'
+    - 'lawyer'
+    - 'dentist'
+    - 'doctor'
+    - 'hospital'
+    - 'clinic'
+
+  # Keywords in company names to exclude
+  negative_keywords:
+    - 'restaurant'
+    - 'cafe'
+    - 'bar'
+    - 'gym'
+    - 'hotel'
+    - 'motel'
+    - 'salon'
+    - 'spa'
+    - 'retail'
+    - 'store'
+    - 'shop'
+    - 'grocery'
+    - 'supermarket'
+    - 'daycare'
+    - 'childcare'
+    - 'real estate'
+    - 'auto repair'
+    - 'car dealer'
+    - 'gas station'
+    - 'pharmacy'
+    - 'bank'
+    - 'insurance'
+    - 'law firm'
+    - 'dental'
+    - 'medical center'
+
+  # Minimum review count for filtering
+  min_review_count: 3
+
+  # Business indicators for website validation
+  business_indicators:
+    - 'about us'
+    - 'company'
+    - 'business'
+    - 'services'
+    - 'contact'
+    - 'team'
+    - 'professional'
+    - 'consulting'
+    - 'manufacturing'
+    - 'medical'
+    - 'technology'
+    - 'solutions'
+
+scoring:
+  # Website required scoring weights
+  website_required_weights:
+    industry_match: 3
+    website_required: 2
+    high_rating: 2
+    good_rating: 1
+    size_indicator: 1
+    us_location: 1
+    business_type: 1
+
+  # Rating thresholds
+  rating_thresholds:
+    high_rating: 3.5
+    high_reviews: 10
+    good_rating: 3.0
+    good_reviews: 5
+
+  # Fit category thresholds
+  fit_thresholds:
+    high_fit: 7
+    medium_fit: 5
+    low_fit: 3
+
+  # ICP scoring weights
+  icp_weights:
+    us_location: 1
+    high_rating: 1
+    good_rating: 0.5
+    business_type: 1
+    industry_keyword: 2
+    size_keyword: 1
+
+  # Minimum ICP score
+  min_icp_score: 2
+
+ai:
+  # AI evaluation delays
+  precheck_delay: 0.3
+  evaluation_delay: 0.3
+  
+  # AI evaluation tokens
+  precheck_max_tokens: 10
+  evaluation_max_tokens: 500
+  
+  # Website excerpt max characters
+  site_excerpt_max_chars: 1200
+
+output:
+  # CSV output settings
+  filename_prefix: "prospecting_results"
+  sort_by_fit_category: true
+  sort_by_rating: true
+
+# US States for location filtering
+us_states:
+  - 'AL'
+  - 'AK'
+  - 'AZ'
+  - 'AR'
+  - 'CA'
+  - 'CO'
+  - 'CT'
+  - 'DE'
+  - 'FL'
+  - 'GA'
+  - 'HI'
+  - 'ID'
+  - 'IL'
+  - 'IN'
+  - 'IA'
+  - 'KS'
+  - 'KY'
+  - 'LA'
+  - 'ME'
+  - 'MD'
+  - 'MA'
+  - 'MI'
+  - 'MN'
+  - 'MS'
+  - 'MO'
+  - 'MT'
+  - 'NE'
+  - 'NV'
+  - 'NH'
+  - 'NJ'
+  - 'NM'
+  - 'NY'
+  - 'NC'
+  - 'ND'
+  - 'OH'
+  - 'OK'
+  - 'OR'
+  - 'PA'
+  - 'RI'
+  - 'SC'
+  - 'SD'
+  - 'TN'
+  - 'TX'
+  - 'UT'
+  - 'VT'
+  - 'VA'
+  - 'WA'
+  - 'WV'
+  - 'WI'
+  - 'WY'
