@@ -1,0 +1,181 @@
+# modular_prospecting_model.py
+from typing import List, Dict, Any
+from config_manager import ConfigManager
+from search_module import SearchModule
+from filter_module import FilterModule
+from ai_module import AIModule
+from output_module import OutputModule
+
+class ModularProspectingModel:
+    """Modular version of the prospecting model with configuration support"""
+    
+    def __init__(self, config_path: str = "config.yaml"):
+        # Initialize configuration manager
+        self.config_manager = ConfigManager(config_path)
+        
+        # Initialize modules
+        self.search_module = SearchModule(self.config_manager)
+        self.filter_module = FilterModule(self.config_manager)
+        self.ai_module = AIModule(self.config_manager)
+        self.output_module = OutputModule(self.config_manager)
+        
+        print("✅ Modular Prospecting Model initialized")
+        print(f"📊 Max results: {self.config_manager.get_max_results()}")
+        print(f"�� Core keywords: {len(self.config_manager.get_core_keywords())}")
+        print(f"🏙️ Tier 1 cities: {len(self.config_manager.get_tier_1_cities())}")
+    
+    def run_refined_pipeline(self) -> List[Dict[str, Any]]:
+        """Run the complete refined prospecting pipeline"""
+        print("=== MODULAR PROSPECTING MODEL ===")
+        print("Flow: Search → Noise Filter → AI Pre-check → AI Evaluation → Website Validation → Save")
+
+        try:
+            # 1. Search with optimized keywords
+            print("\n1. Searching with optimized keywords...")
+            core_results, peripheral_results = self.search_module.search_with_optimized_keywords()
+            max_results = self.config_manager.get_max_results()
+            all_companies = (core_results + peripheral_results)[:max_results]
+            
+            if not all_companies:
+                print("❌ No companies found in initial search!")
+                return []
+
+            # 2. Apply noise filtering
+            print("\n2. Applying noise filtering...")
+            filtered_companies = self.filter_module.filter_noise(all_companies)
+            print(f"After noise filtering: {len(filtered_companies)} companies")
+            
+            if len(filtered_companies) == 0:
+                print("❌ No companies passed noise filtering!")
+                return []
+
+            # 3. AI Pre-check
+            print("\n3. AI Pre-check...")
+            precheck_companies = self.ai_module.ai_precheck(filtered_companies)
+            
+            if len(precheck_companies) == 0:
+                print("❌ No companies passed AI pre-check!")
+                return []
+
+            # 4. AI Evaluation
+            print("\n4. AI Evaluation...")
+            evaluated_companies = self.ai_module.add_ai_evaluation(precheck_companies)
+            
+            if len(evaluated_companies) == 0:
+                print("❌ No companies were evaluated!")
+                return []
+
+            # 5. Optional Website Validation (on top 20 companies only)
+            print("\n5. Optional Website Validation (top 20 companies)...")
+            # Sort by fit category (High, Medium, Low) and take top 20
+            category_order = {'High': 3, 'Medium': 2, 'Low': 1, 'Unknown': 0}
+            evaluated_companies.sort(
+                key=lambda x: (
+                    category_order.get(x.get('ai_fit_category', 'Unknown'), 0), 
+                    x.get('rating', 0)
+                ), 
+                reverse=True
+            )
+            top_companies = evaluated_companies[:20]
+            
+            # Try to get websites for top companies
+            companies_with_websites = self.filter_module.filter_websites_required(top_companies)
+            
+            if len(companies_with_websites) > 0:
+                print(f"✅ Found {len(companies_with_websites)} companies with valid websites")
+                final_companies = companies_with_websites
+            else:
+                print("⚠️ No companies passed website validation, using evaluated companies without websites")
+                final_companies = top_companies
+
+            # 6. Save results
+            print("\n6. Saving results...")
+            csv_file = self.output_module.save_results(final_companies, "modular_prospecting_results")
+
+            print(f"\n=== PIPELINE COMPLETE ===")
+            print(f"Final results saved to: {csv_file}")
+            print(f"Total companies: {len(final_companies)}")
+            
+            # Print summary of AI evaluation fields
+            self._print_ai_evaluation_summary(final_companies)
+
+            return final_companies
+
+        except Exception as e:
+            print(f"❌ Pipeline failed with error: {e}")
+            return []
+    
+    def _print_ai_evaluation_summary(self, companies: List[Dict[str, Any]]):
+        """Print AI evaluation summary"""
+        if companies:
+            print(f"\n=== AI EVALUATION SUMMARY ===")
+            high_fit = [c for c in companies if c.get('ai_fit_category') == 'High']
+            medium_fit = [c for c in companies if c.get('ai_fit_category') == 'Medium']
+            low_fit = [c for c in companies if c.get('ai_fit_category') == 'Low']
+            
+            print(f"High Fit: {len(high_fit)} companies")
+            print(f"Medium Fit: {len(medium_fit)} companies")
+            print(f"Low Fit: {len(low_fit)} companies")
+            
+            # Calculate average prospect score if available
+            scores = [c.get('ai_prospect_score', 0) for c in companies if c.get('ai_prospect_score')]
+            if scores:
+                avg_score = sum(scores) / len(scores)
+                print(f"Average Prospect Score: {avg_score:.1f}")
+    
+    def run_custom_pipeline(self, steps: List[str]) -> List[Dict[str, Any]]:
+        """Run a custom pipeline with specified steps"""
+        print(f"=== CUSTOM PIPELINE: {', '.join(steps)} ===")
+        
+        companies = []
+        
+        try:
+            if 'search' in steps:
+                print("\n�� Running search...")
+                core_results, peripheral_results = self.search_module.search_with_optimized_keywords()
+                companies = (core_results + peripheral_results)[:self.config_manager.get_max_results()]
+            
+            if 'filter' in steps and companies:
+                print("\n🔧 Running noise filtering...")
+                companies = self.filter_module.filter_noise(companies)
+            
+            if 'precheck' in steps and companies:
+                print("\n🤖 Running AI pre-check...")
+                companies = self.ai_module.ai_precheck(companies)
+            
+            if 'evaluate' in steps and companies:
+                print("\n📊 Running AI evaluation...")
+                companies = self.ai_module.add_ai_evaluation(companies)
+            
+            if 'websites' in steps and companies:
+                print("\n🌐 Running website validation...")
+                companies = self.filter_module.filter_websites_required(companies[:20])
+            
+            if 'save' in steps and companies:
+                print("\n💾 Saving results...")
+                self.output_module.save_results(companies, "custom_pipeline_results")
+            
+            print(f"\n✅ Custom pipeline complete: {len(companies)} companies")
+            return companies
+            
+        except Exception as e:
+            print(f"❌ Custom pipeline failed: {e}")
+            return []
+
+def main():
+    """Run the modular prospecting model"""
+    print("=== Modular Prospecting Model ===")
+    print("Target: <= 100 companies matching ICP criteria")
+    print("ICP Criteria: US-based, small businesses, medical/manufacturing/consulting focus")
+
+    # Initialize the model
+    model = ModularProspectingModel("config.yaml")
+
+    # Run the full pipeline
+    results = model.run_refined_pipeline()
+    
+    # Optional: Run custom pipeline example
+    # results = model.run_custom_pipeline(['search', 'filter', 'save'])
+
+if __name__ == "__main__":
+    main()
